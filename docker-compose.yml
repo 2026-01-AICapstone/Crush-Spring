@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: crush-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: crush-db       # 제공하신 URL의 DB명
+      MYSQL_USER: crush-db-user           # 제공하신 Username
+      MYSQL_PASSWORD: 1234  # 사용할 비밀번호 (임의 설정)
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
