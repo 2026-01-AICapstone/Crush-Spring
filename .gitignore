@@ -38,3 +38,6 @@ out/
 ##MYSQL
 mysql_data/
 src/mysql_data/
+
+#claude
+SKILL.md
