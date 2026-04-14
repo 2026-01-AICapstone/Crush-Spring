@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: crush-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: crush-db
+      MYSQL_USER: crush-db-user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crush-spring
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=cloud
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - FASTAPI_URL=${FASTAPI_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../Crush-Frontend
+      dockerfile: Dockerfile
+    container_name: crush-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - SPRING_URL=http://crush-spring:8080
+    depends_on:
+      - spring
+
+volumes:
+  mysql_data:
