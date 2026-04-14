@@ -32,6 +32,19 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: ../Crush-Frontend
+      dockerfile: Dockerfile
+    container_name: crush-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - SPRING_URL=http://crush-spring:8080
+    depends_on:
+      - spring
+
   fastapi:
     build:
       context: ../Crush-FastAPI
@@ -48,3 +61,4 @@ services:
 
 volumes:
   fastapi-model-cache:
+
